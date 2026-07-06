@@ -1,0 +1,30 @@
+{
+    "user": "NarutoUzumaki",
+    "senha": "123",
+    "historico": [
+        {
+            "role": "user",
+            "text": "OI"
+        },
+        {
+            "role": "bot",
+            "text": "Tudo bem? Como posso ajudar você hoje? Quer conversar sobre algo específico ou apenas dar uma conversa?"
+        },
+        {
+            "role": "user",
+            "text": "QUEM E VC?"
+        },
+        {
+            "role": "bot",
+            "text": "Sou o Chat do Lucas! Eu sou um sistema de inteligência artificial projetado para conversar e fornecer informações em português, aqui para ajudar e cuidar de você!"
+        },
+        {
+            "role": "user",
+            "text": "quem é vc ?"
+        },
+        {
+            "role": "bot",
+            "text": "Eu sou o Naruto Uzumaki! Sou um ninja da Vila da Folha, localizada na aldeia da folha, e sou determinado a se tornar o Hokage, o líder da nossa vila. Meu sonho é proteger meus amigos e proteger a vila que eu amo. Sou leal e fiel ao meu time, e estou disposto a lutar pela justiça e pela paz. Meu destino é grande, e não vou desistir nunca! Dattebayo!"
+        }
+    ]
+}

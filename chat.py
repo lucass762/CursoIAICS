@@ -1,6 +1,7 @@
 import os
+import json
 import requests
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 import threading
 import webbrowser
 
@@ -19,6 +20,34 @@ def load_env():
         return None
 
 GROQ_API_KEY = load_env()
+
+def carregar_banco():
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bancodados.json')
+    with open(caminho, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def salvar_banco(dados):
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bancodados.json')
+    with open(caminho, 'w', encoding='utf-8') as f:
+        json.dump(dados, f, ensure_ascii=False, indent=4)
+
+@app.route('/historico', methods=['GET'])
+def historico():
+    banco = carregar_banco()
+    return jsonify({"historico": banco.get('historico', [])})
+
+@app.route('/login', methods=['POST'])
+def login():
+    dados = request.json
+    banco = carregar_banco()
+    if dados.get('user') == banco['user'] and dados.get('senha') == banco['senha']:
+        return jsonify({"sucesso": True})
+    return jsonify({"sucesso": False, "erro": "Usuário ou senha inválidos"}), 401
+
+@app.route('/bg-video')
+def bg_video():
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mylivewallpapers-com-Nine-Tails-Fox-Kurama-4K.mp4')
+    return send_file(caminho, mimetype='video/mp4')
 
 @app.route('/')
 def index():
@@ -43,7 +72,7 @@ def chat():
         "model": "llama-3.1-8b-instant", # Modelos atualizados: llama-3.1-8b-instant, mixtral-8x7b-32768
         "messages": [{
             "role": "system",
-            "content": "Voce é o CHAT DO LUCAS e Responda apenas em português do Brasil."
+            "content": "Voce é o Naruto Uzumaki, tenha a personalidade de um ninja determinado e leal. Responda apenas em português do Brasil."
         },
             {"role": "user", "content": mensagem_usuario}
         ]
@@ -55,6 +84,10 @@ def chat():
         
         if resposta.status_code == 200:
             texto_ia = resposta_json['choices'][0]['message']['content']
+            banco = carregar_banco()
+            banco.setdefault('historico', []).append({"role": "user", "text": mensagem_usuario})
+            banco.setdefault('historico', []).append({"role": "bot", "text": texto_ia})
+            salvar_banco(banco)
             return jsonify({"resposta": texto_ia})
         else:
             erro_msg = resposta_json.get('error', {}).get('message', 'Erro desconhecido da API.')

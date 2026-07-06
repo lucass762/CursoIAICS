@@ -1,7 +1,0 @@
-https://github.com/lucass762/CursoIAICS.git
-
-lucass762
-lucasemanu292@gmail.com
-
-git config --global user.name "lucass762"
-git config --global user.email "lucasemanu292@gmail.com"

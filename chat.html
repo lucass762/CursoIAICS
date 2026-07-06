@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUCASGPT</title>
+    <title>UZUMAKI CHAT</title>
+    <link rel="icon" type="image/png" href="https://mir-s3-cdn-cf.behance.net/project_modules/1400_webp/cd536c196707911.66248e1b7f8d9.png">
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -11,21 +12,97 @@
             color: #ECECEC;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
             height: 100vh;
         }
-        body::before {
-            content: "";
+        #bg-video {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://www.correiobraziliense.com.br/cbradar/wp-content/uploads/2025/03/robos_1742321492248.jpg') center center / cover no-repeat;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             opacity: 0.5;
             z-index: 0;
+            pointer-events: none;
         }
         body > * {
             position: relative;
             z-index: 1;
+        }
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #login-box {
+            background-color: rgba(26, 26, 26, 0.92);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #333;
+            width: 320px;
+            text-align: center;
+        }
+        #login-box h1 {
+            margin: 0 0 8px 0;
+            font-size: 26px;
+            color: #fff;
+        }
+        #login-box p {
+            margin: 0 0 24px 0;
+            color: #999;
+            font-size: 14px;
+        }
+        #login-box .campo {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        #login-box label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        #login-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #2f2f2f;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        #login-box input:focus {
+            border-color: #4a9eff;
+        }
+        #login-box button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4a9eff;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        #login-box button:hover {
+            background-color: #3a8eef;
+        }
+        #login-erro {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+        #chat-screen {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
         }
         #header {
             display: flex;
@@ -70,7 +147,8 @@
             line-height: 1.5;
         }
         .user {
-            background-color: #2b2b2b;
+            background-color: rgba(254, 134, 33, 0.75);
+            color: #1a1a1a;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
@@ -96,7 +174,7 @@
             border-radius: 12px;
             padding: 4px;
         }
-        input {
+        #input-box input {
             flex-grow: 1;
             padding: 12px 16px;
             border: none;
@@ -122,22 +200,120 @@
 </head>
 <body>
 
-    <div id="header"><img src="https://img.magnific.com/psd-gratuitas/robot-3d-bonito-agitando-a-mao-vector-de-desenho-animado-icon-ilustracao-pessoas-tecnologia-vector-plano-isolado_138676-10649.jpg" alt="Robô"> LUCASCODE</div>
-    <div id="chat-container">
-        <div class="message bot">Olá! Como posso ajudar você hoje?</div>
+    <video id="bg-video" src="/bg-video" autoplay loop muted playsinline></video>
+
+    <div id="login-screen">
+        <div id="login-box">
+            <img src="https://mir-s3-cdn-cf.behance.net/project_modules/1400_webp/cd536c196707911.66248e1b7f8d9.png" alt="Kurama" style="height:64px;width:64px;border-radius:50%;object-fit:cover;margin-bottom:8px;animation:float 2s ease-in-out infinite;">
+            <h1>UZUMAKI CHAT</h1>
+            <p>Faça login para entrar no chat</p>
+            <div class="campo">
+                <label for="login-user">Usuário</label>
+                <input type="text" id="login-user" placeholder="Digite seu usuário" autocomplete="off">
+            </div>
+            <div class="campo">
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" placeholder="Digite sua senha">
+            </div>
+            <button onclick="fazerLogin()">Entrar</button>
+            <div id="login-erro"></div>
+        </div>
     </div>
 
-    <div id="input-container">
-        <div id="input-box">
-            <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
-            <button onclick="sendMessage()">Enviar</button>
+    <div id="chat-screen">
+        <div id="header"><img src="https://mir-s3-cdn-cf.behance.net/project_modules/1400_webp/cd536c196707911.66248e1b7f8d9.png" alt="Kurama"> UZUMAKI CHAT</div>
+        <div id="chat-container"></div>
+
+        <div id="input-container">
+            <div id="input-box">
+                <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
         </div>
     </div>
 
     <script>
+        document.getElementById("login-user").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                document.getElementById("login-senha").focus();
+            }
+        });
+
+        document.getElementById("login-senha").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                fazerLogin();
+            }
+        });
+
+        async function fazerLogin() {
+            const user = document.getElementById("login-user").value.trim();
+            const senha = document.getElementById("login-senha").value.trim();
+            const erroEl = document.getElementById("login-erro");
+
+            if (!user || !senha) {
+                erroEl.innerText = "Preencha todos os campos.";
+                erroEl.style.display = "block";
+                return;
+            }
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user, senha })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("chat-screen").style.display = "flex";
+                    await carregarHistorico();
+                    document.getElementById("user-input").focus();
+                } else {
+                    erroEl.innerText = data.erro || "Usuário ou senha inválidos.";
+                    erroEl.style.display = "block";
+                }
+            } catch (error) {
+                erroEl.innerText = "Erro ao conectar com o servidor.";
+                erroEl.style.display = "block";
+            }
+        }
+
+        async function carregarHistorico() {
+            const container = document.getElementById("chat-container");
+            container.innerHTML = "";
+            try {
+                const response = await fetch('/historico');
+                const data = await response.json();
+                if (data.historico && data.historico.length > 0) {
+                    data.historico.forEach(item => {
+                        const div = document.createElement("div");
+                        div.className = `message ${item.role}`;
+                        div.innerText = item.text;
+                        container.appendChild(div);
+                    });
+                } else {
+                    const div = document.createElement("div");
+                    div.className = "message bot";
+                    div.innerText = "Olá! Como posso ajudar você hoje?";
+                    container.appendChild(div);
+                }
+                container.scrollTop = container.scrollHeight;
+            } catch (error) {
+                const div = document.createElement("div");
+                div.className = "message bot";
+                div.innerText = "Olá! Como posso ajudar você hoje?";
+                container.appendChild(div);
+            }
+        }
+
         const inputField = document.getElementById("user-input");
         
-        // Enviar com a tecla Enter
         inputField.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -152,7 +328,6 @@
             addMessageToChat('user', message);
             inputField.value = '';
 
-            // Mostrar mensagem de carregamento
             const loadingId = addMessageToChat('bot', 'Pensando...');
 
             try {
@@ -166,7 +341,6 @@
 
                 const data = await response.json();
                 
-                // Atualiza a mensagem de carregamento com a resposta real
                 document.getElementById(loadingId).innerText = data.resposta || data.erro;
 
             } catch (error) {
@@ -180,13 +354,11 @@
             div.className = `message ${role}`;
             div.innerText = text;
             
-            // Gera um ID único para poder atualizar a mensagem depois (útil pro 'Pensando...')
             const id = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
             div.id = id;
             
             container.appendChild(div);
             
-            // Rola para o fim
             container.scrollTop = container.scrollHeight;
             return id;
         }
